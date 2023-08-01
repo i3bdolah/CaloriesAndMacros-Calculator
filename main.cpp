@@ -13,7 +13,8 @@ struct strNutritionAttr
     float protienG, protienCAL, protienPercentOfTC;
     float fatG, fatCAL, fatPercentOfTC;
     float carbG, carbCAL, carbPercentOfTC;
-    float maintainCAL, looseCAL, gainCAL;
+    float maintainCAL, looseCAL, gainCAL, choosedCAL;
+    float bmi;
     enCaloriesGoal goalCalories;
 };
 
@@ -163,6 +164,22 @@ float calcTDEE(strAthleteInformation myAthlete) {
 }
 
 
+// strAthleteInformation calcMacrosOnCaloriesGoal(strAthleteInformation &MyAthlete, ) {
+//         MyAthlete.MyNutritionAttr.protienCAL = MyAthlete.MyPhysicalAttr.weightLBS;
+//         MyAthlete.MyNutritionAttr.protienG = MyAthlete.MyNutritionAttr.protienCAL / 4;
+//         MyAthlete.MyNutritionAttr.protienPercentOfTC = ;
+
+//         MyAthlete.MyNutritionAttr.fatCAL = calcFat(MyAthlete.MyNutritionAttr.maintainCAL);
+//         MyAthlete.MyNutritionAttr.fatG = MyAthlete.MyNutritionAttr.fatCAL / 9;
+//         MyAthlete.MyNutritionAttr.fatPercentOfTC = ;
+
+//         MyAthlete.MyNutritionAttr.carbCAL = calcCarb(MyAthlete.MyNutritionAttr.protienCAL, MyAthlete.MyNutritionAttr.fatCAL, MyAthlete.MyNutritionAttr.maintainCAL);
+//         MyAthlete.MyNutritionAttr.carbG = MyAthlete.MyNutritionAttr.carbCAL / 4;
+//         MyAthlete.MyNutritionAttr.carbPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.carbCAL, );
+
+//     return MyAthlete;
+// }
+
 
 strAthleteInformation fillingPhysicalAttrData(strAthleteInformation &MyAthlete) {
 
@@ -192,61 +209,57 @@ strAthleteInformation fillingNutritionAttrData(strAthleteInformation &MyAthlete)
 
     MyAthlete.MyNutritionAttr.goalCalories = goalHandler("\nIn Range From [1 - 3] =>\n1 - Loose weight\n2 - Maintain weight\n3 - Gain weight\nEnter the most suited goal number : ");
 
+    MyAthlete.MyNutritionAttr.maintainCAL = calcBMR(MyAthlete);
+    MyAthlete.MyNutritionAttr.maintainCAL = calcTDEE(MyAthlete);
+    MyAthlete.MyNutritionAttr.looseCAL = MyAthlete.MyNutritionAttr.maintainCAL - 500;
+    MyAthlete.MyNutritionAttr.gainCAL = MyAthlete.MyNutritionAttr.maintainCAL + 500;
+
     switch (MyAthlete.MyNutritionAttr.goalCalories)
     {
     case enCaloriesGoal::Loose :
-        MyAthlete.MyNutritionAttr.maintainCAL = calcBMR(MyAthlete);
-        MyAthlete.MyNutritionAttr.maintainCAL = calcTDEE(MyAthlete);
-        MyAthlete.MyNutritionAttr.looseCAL = MyAthlete.MyNutritionAttr.maintainCAL - 500;
-        MyAthlete.MyNutritionAttr.gainCAL = MyAthlete.MyNutritionAttr.maintainCAL + 500;
+        MyAthlete.MyNutritionAttr.choosedCAL = MyAthlete.MyNutritionAttr.looseCAL;
 
         MyAthlete.MyNutritionAttr.protienCAL = MyAthlete.MyPhysicalAttr.weightLBS;
         MyAthlete.MyNutritionAttr.protienG = MyAthlete.MyNutritionAttr.protienCAL / 4;
-        // MyAthlete.MyNutritionAttr.protienPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.protienPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.protienCAL, MyAthlete.MyNutritionAttr.looseCAL);
 
         MyAthlete.MyNutritionAttr.fatCAL = calcFat(MyAthlete.MyNutritionAttr.looseCAL);
         MyAthlete.MyNutritionAttr.fatG = MyAthlete.MyNutritionAttr.fatCAL / 9;
-        // MyAthlete.MyNutritionAttr.fatPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.fatPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.fatCAL, MyAthlete.MyNutritionAttr.looseCAL);
 
         MyAthlete.MyNutritionAttr.carbCAL = calcCarb(MyAthlete.MyNutritionAttr.protienCAL, MyAthlete.MyNutritionAttr.fatCAL, MyAthlete.MyNutritionAttr.looseCAL);
         MyAthlete.MyNutritionAttr.carbG = MyAthlete.MyNutritionAttr.carbCAL / 4;
-        // MyAthlete.MyNutritionAttr.fatPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.carbPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.carbCAL, MyAthlete.MyNutritionAttr.looseCAL);
         break;
     case enCaloriesGoal::Maintain :
-        MyAthlete.MyNutritionAttr.maintainCAL = calcBMR(MyAthlete);
-        MyAthlete.MyNutritionAttr.maintainCAL = calcTDEE(MyAthlete);
-        MyAthlete.MyNutritionAttr.looseCAL = MyAthlete.MyNutritionAttr.maintainCAL - 500;
-        MyAthlete.MyNutritionAttr.gainCAL = MyAthlete.MyNutritionAttr.maintainCAL + 500;
-
+        MyAthlete.MyNutritionAttr.choosedCAL = MyAthlete.MyNutritionAttr.maintainCAL;
+        
         MyAthlete.MyNutritionAttr.protienCAL = MyAthlete.MyPhysicalAttr.weightLBS;
         MyAthlete.MyNutritionAttr.protienG = MyAthlete.MyNutritionAttr.protienCAL / 4;
-        // MyAthlete.MyNutritionAttr.protienPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.protienPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.protienCAL, MyAthlete.MyNutritionAttr.maintainCAL);
 
         MyAthlete.MyNutritionAttr.fatCAL = calcFat(MyAthlete.MyNutritionAttr.maintainCAL);
         MyAthlete.MyNutritionAttr.fatG = MyAthlete.MyNutritionAttr.fatCAL / 9;
-        // MyAthlete.MyNutritionAttr.fatPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.fatPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.fatCAL, MyAthlete.MyNutritionAttr.maintainCAL);
 
         MyAthlete.MyNutritionAttr.carbCAL = calcCarb(MyAthlete.MyNutritionAttr.protienCAL, MyAthlete.MyNutritionAttr.fatCAL, MyAthlete.MyNutritionAttr.maintainCAL);
         MyAthlete.MyNutritionAttr.carbG = MyAthlete.MyNutritionAttr.carbCAL / 4;
-        // MyAthlete.MyNutritionAttr.fatPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.carbPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.carbCAL, MyAthlete.MyNutritionAttr.maintainCAL);
         break;
     case enCaloriesGoal::Gain :
-        MyAthlete.MyNutritionAttr.maintainCAL = calcBMR(MyAthlete);
-        MyAthlete.MyNutritionAttr.maintainCAL = calcTDEE(MyAthlete);
-        MyAthlete.MyNutritionAttr.looseCAL = MyAthlete.MyNutritionAttr.maintainCAL - 500;
-        MyAthlete.MyNutritionAttr.gainCAL = MyAthlete.MyNutritionAttr.maintainCAL + 500;
-
+        MyAthlete.MyNutritionAttr.choosedCAL = MyAthlete.MyNutritionAttr.maintainCAL;
+        
         MyAthlete.MyNutritionAttr.protienCAL = MyAthlete.MyPhysicalAttr.weightLBS;
         MyAthlete.MyNutritionAttr.protienG = MyAthlete.MyNutritionAttr.protienCAL / 4;
-        // MyAthlete.MyNutritionAttr.protienPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.protienPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.protienCAL, MyAthlete.MyNutritionAttr.gainCAL);
 
         MyAthlete.MyNutritionAttr.fatCAL = calcFat(MyAthlete.MyNutritionAttr.gainCAL);
         MyAthlete.MyNutritionAttr.fatG = MyAthlete.MyNutritionAttr.fatCAL / 9;
-        // MyAthlete.MyNutritionAttr.fatPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.fatPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.fatCAL, MyAthlete.MyNutritionAttr.gainCAL);
 
         MyAthlete.MyNutritionAttr.carbCAL = calcCarb(MyAthlete.MyNutritionAttr.protienCAL, MyAthlete.MyNutritionAttr.fatCAL, MyAthlete.MyNutritionAttr.gainCAL);
         MyAthlete.MyNutritionAttr.carbG = MyAthlete.MyNutritionAttr.carbCAL / 4;
-        // MyAthlete.MyNutritionAttr.fatPercentOfTC = ;
+        MyAthlete.MyNutritionAttr.carbPercentOfTC = calcPercentFromGoal(MyAthlete.MyNutritionAttr.carbCAL, MyAthlete.MyNutritionAttr.gainCAL);
         break;
     default:
         break;
@@ -286,17 +299,19 @@ void printPhysicalData(strAthleteInformation athleteInfo) {
 
 void printNutritionData(strAthleteInformation athleteInfo) {
 
-    cout << "************** NUTRITION **************" << endl;
+
+    cout << "\n\n";
+    cout << "************** " << athleteInfo.MyPhysicalAttr.name << " **************" << endl;
     cout << "Maintain CAL : " << athleteInfo.MyNutritionAttr.maintainCAL << endl;
     cout << "Loose CAL : " << athleteInfo.MyNutritionAttr.looseCAL << endl;
     cout << "Gain CAL : " << athleteInfo.MyNutritionAttr.gainCAL << endl;
     cout << "\n";
-    cout << "Protien : " << athleteInfo.MyNutritionAttr.protienCAL << "cal, " << athleteInfo.MyNutritionAttr.protienG << "g" << endl;
-    cout << "\n";
-    cout << "Fat : " << athleteInfo.MyNutritionAttr.fatCAL << "cal, " << athleteInfo.MyNutritionAttr.fatG << "g" << endl;
-    cout << "\n";
-    cout << "Carb : " << athleteInfo.MyNutritionAttr.carbCAL << "cal, " << athleteInfo.MyNutritionAttr.carbG << "g" << endl;
-    cout << "\n";
+    cout << "Protien : " << athleteInfo.MyNutritionAttr.protienCAL << " cal. | " << athleteInfo.MyNutritionAttr.protienG << " g. | " << athleteInfo.MyNutritionAttr.protienPercentOfTC << endl;
+    cout << "____________________" << endl;
+    cout << "Fat : " << athleteInfo.MyNutritionAttr.fatCAL << " cal. | " << athleteInfo.MyNutritionAttr.fatG << " g. |" << athleteInfo.MyNutritionAttr.fatPercentOfTC << endl;
+    cout << "____________________" << endl;
+    cout << "Carb : " << athleteInfo.MyNutritionAttr.carbCAL << " cal. | " << athleteInfo.MyNutritionAttr.carbG << " g. |" << athleteInfo.MyNutritionAttr.carbPercentOfTC << endl;
+    cout << "____________________" << endl;
 }
 
 
